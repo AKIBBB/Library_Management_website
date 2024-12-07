@@ -1,0 +1,31 @@
+{% extends 'library/base.html' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ book.title }}</h1>
+<p>{{ book.description }}</p>
+
+<h2>Reviews</h2>
+{% if reviews %}
+    <ul>
+        {% for review in reviews %}
+            <li><strong>{{ review.user.username }}:</strong> {{ review.content }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No reviews yet. Be the first to review this book!</p>
+{% endif %}
+
+{% if user.is_authenticated %}
+    <h2>Write a Review</h2>
+    <form method="post" action="{% url 'review_book' book.id %}">
+        {% csrf_token %}
+        <textarea name="content" rows="3" placeholder="Write your review..." required></textarea>
+        <button type="submit">Submit Review</button>
+    </form>
+{% else %}
+    <p><a href="{% url 'login' %}">Log in</a> to write a review.</p>
+{% endif %}
+{% endblock %}
+

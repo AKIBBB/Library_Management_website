@@ -1,0 +1,63 @@
+{% extends 'library/base.html' %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<h1>Your Profile</h1>
+{% if messages %}
+    <div>
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+<h2>Update Profile</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="update_profile">Update Profile</button>
+</form>
+<h2>Account Balance: ${{ user_profile.balance }}</h2>
+<h2>Deposit Money</h2>
+<form method="post">
+    {% csrf_token %}
+    <label for="amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required>
+    <button type="submit" name="deposit_money">Deposit</button>
+</form>
+
+<h2>Borrowing History</h2>
+{% if borrowing_history %}
+    <table>
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>Borrow Date</th>
+                <th>Return Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for history in borrowing_history %}
+                <tr>
+                    <td>{{ history.book.title }}</td>
+                    <td>{{ history.borrow_date|date:"Y-m-d" }}</td>
+                    <td>{{ history.return_date|date:"Y-m-d"|default:"Not Returned" }}</td>
+                    <td>
+                        {% if not history.return_date %}
+                            <form method="post" action="{% url 'return_book' history.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit">Return Book</button>
+                            </form>
+                        {% else %}
+                            <span>Returned</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>You haven't borrowed any books yet.</p>
+{% endif %}
+{% endblock %}

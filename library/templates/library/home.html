@@ -1,0 +1,92 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Available Books</h1>
+
+<div class="m-4">
+    <form method="get" style="display: flex; gap: 10px; align-items: center;">
+        
+        <select name="category" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+                <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <!-- Search Box -->
+        <input type="text" name="q" placeholder="Search books..." value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<div>
+    {% for book in books %}
+        <div class="border p-3 mb-4">
+            <h2>{{ book.title }}</h2>
+            <p>{{ book.description|slice:":30" }}{% if book.description|length > 30 %}...{% endif %}</p>
+            {% if selected_book_id|default_if_none:""|add:"" == book.id|stringformat:"s" %}
+                <div>
+                    <h3>Full Description</h3>
+                    <p>{{ book.description }}</p>
+                </div>
+            {% endif %}
+
+            {% if book.description|length > 30 %}
+                <form method="post" action="{% url 'home' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="book_id" value="{{ book.id }}">
+                    <button  type="submit" name="action" value="see_more">See More</button>
+                </form>
+            {% endif %}
+
+            <p>Price: ${{ book.price }}</p>
+            <p>Available: {{ book.quantity }}</p>
+->
+            {% if book.image %}
+                <img src="{{ book.image.url }}" alt="{{ book.title }}" style="width:150px;">
+            {% else %}
+                <p>No image available</p>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <div class="mt-5">
+                    <form action="{% url 'buy_book' book.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button  class="text-body-emphasis" type="submit" {% if book.quantity == 0 %}disabled{% endif %}>Buy</button>
+                    </form>
+                    <form action="{% url 'borrow_book' book.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <label for="return_date_{{ book.id }}">Return Date:</label>
+                        <input type="date" name="return_date" id="return_date_{{ book.id }}" required>
+                        <button  class="text-body-emphasis" type="submit" {% if book.quantity == 0 %}disabled{% endif %}>Borrow</button>
+                    </form>
+                </div>
+                {% if book.id in purchased_books %}
+                    <form action="{% url 'review_book' book.id %}" method="post" style="margin-top: 10px;">
+                        {% csrf_token %}
+                        <textarea name="content" rows="3" placeholder="Write your review here..." required></textarea>
+                        <div>
+                            <button class="m-3 p-2 text-success-emphasis bg-info " type="submit">Submit Review</button>
+                        </div>
+                    </form>
+                {% endif %}
+            {% endif %}
+
+            <div class="mt-5">
+                <h3 class="text-body-emphasis">Reviews:</h3>
+                {% for review in book.review_set.all %}
+                    <p><strong>{{ review.user.username }}:</strong> {{ review.content }}</p>
+                {% empty %}
+                    <p>No reviews yet. Be the first to review this book!</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% empty %}
+        <p>No books found for the selected category or search term.</p>
+    {% endfor %}
+</div>
+{% endblock %}

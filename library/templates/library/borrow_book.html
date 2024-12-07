@@ -1,0 +1,29 @@
+{% extends 'library/base.html' %}
+
+{% block title %}Borrow Book{% endblock %}
+
+{% block content %}
+<h1>Borrow "{{ book.title }}"</h1>
+<div>
+    <h2>{{ book.title }}</h2>
+    <p><strong>Description:</strong> {{ book.description }}</p>
+    <p><strong>Available Quantity:</strong> {{ book.quantity }}</p>
+</div>
+<form method="post" action="{% url 'borrow_book' book.id %}">
+    {% csrf_token %}
+    <div>
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div>
+        <label for="email">Your Email:</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+    <div>
+        <label for="return_date">Return Date:</label>
+        <input type="date" id="return_date" name="return_date" required>
+    </div>
+    <button class="bg-info" type="submit">Confirm Borrow</button>
+</form>
+{% endblock %}
+
