@@ -1,6 +1,6 @@
 {
     "builds": [{
-      "src": "Library_Management_System/wsgi.py",
+      "src": "Library_Management_website/wsgi.py",
       "use": "@vercel/python",
       "config": { "maxLambdaSize": "15mb", "runtime": "python3.11.3" }
     }],
