@@ -43,7 +43,6 @@
 
             <p>Price: ${{ book.price }}</p>
             <p>Available: {{ book.quantity }}</p>
-->
             {% if book.image %}
                 <img src="{{ book.image.url }}" alt="{{ book.title }}" style="width:150px;">
             {% else %}

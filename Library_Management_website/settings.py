@@ -19,7 +19,7 @@ SECRET_KEY = 'django-insecure-*6n-*eyz2x^$h%frgilh8$p+0x!p#%xybo%iz@6tht1=40@yrw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "vercel.app"]
+ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app"]
 
 
 # Application definition
@@ -126,9 +126,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
-
-MEDIA_URL = '/media/'  # URL to access media files in development
+STATICFILES_DIRS = [BASE_DIR / "static"]  
 MEDIA_ROOT = BASE_DIR / 'staticfiles' 
 
 # Default primary key field type
